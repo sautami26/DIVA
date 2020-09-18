@@ -1,9 +1,6 @@
 import glob
-
 import numpy.random
-
 import numpy as np
-
 from PIL import Image
 
 import torch
@@ -55,6 +52,7 @@ class MalariaData(data_utils.Dataset):
         self.to_pil = transforms.ToPILImage()
 
         self.train_data, self.train_labels, self.train_domain = self.get_data()
+        
 
     def get_cells_from_imgs(self, label_folder, domain):
         all_cells = [f for f in glob.glob(self.path + label_folder + "*.png", recursive=True)]
@@ -74,6 +72,7 @@ class MalariaData(data_utils.Dataset):
 
         # Concatenate
         return torch.stack(cell_tensor_list)
+    
 
     def get_data(self):
         cells_per_domain_list = []
@@ -92,11 +91,13 @@ class MalariaData(data_utils.Dataset):
             domain_labels = torch.zeros(label_unifected.size()[0] + label_parasitized.size()[0]) + i
             domain_per_domain_list.append(domain_labels)
 
+            
         # One last cat
         train_imgs = torch.cat(cells_per_domain_list)
         train_labels = torch.cat(labels_per_domain_list).long()
         train_domains = torch.cat(domain_per_domain_list).long()
 
+        
         # Convert to onehot
         y = torch.eye(2)
         train_labels = y[train_labels]
@@ -106,6 +107,7 @@ class MalariaData(data_utils.Dataset):
 
         return train_imgs, train_labels, train_domains
 
+    
     def __len__(self):
         return len(self.train_labels)
 
